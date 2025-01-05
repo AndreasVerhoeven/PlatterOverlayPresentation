@@ -125,7 +125,7 @@ public class SimpleCompactPickerView<Item>: UIControl, UIPickerViewDataSource, U
 
 	private func updateColors() {
 		if isEnabled == true {
-			backgroundView.alpha = (isHighlighted == true ? 0.5 : 1)
+			backgroundView.alpha = (isHighlighted == true ? 0.75 : 1)
 			titleLabel.textColor = ((isSelected == true || presentation?.isPresented == true) ? tintColor : .label)
 		} else {
 			backgroundView.alpha = 0.25

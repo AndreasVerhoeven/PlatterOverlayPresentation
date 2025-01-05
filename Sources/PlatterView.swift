@@ -30,7 +30,7 @@ final class PlatterView: UIView {
 		animateIfNeeded(animated: animated, animations: {
 			self.clipView.activeConditionalConstraintsConfigurationName = .expanded
 			self.transform = .identity
-			self.shadowView.alpha = 0.21
+			self.shadowView.alpha = self.alphaForShadowViewWhenExpanded
 			self.alpha = 1
 		}, completion: completion)
 	}
@@ -47,8 +47,23 @@ final class PlatterView: UIView {
 		}
 	}
 
+	private var alphaForShadowViewWhenExpanded: CGFloat {
+		switch traitCollection.userInterfaceStyle {
+			case .unspecified: return 0.21
+			case .light: return 0.21
+			case .dark: return 0.4
+			@unknown default: return 0.21
+		}
+	}
 
 	// MARK: - UIView
+	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+		super.traitCollectionDidChange(previousTraitCollection)
+
+		guard shadowView.alpha != 0 else { return }
+		shadowView.alpha = alphaForShadowViewWhenExpanded
+	}
+
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 
