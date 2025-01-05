@@ -8,6 +8,7 @@
 import UIKit
 import AutoLayoutConvenience
 
+/// This example mimicks a compact UIDatePicker by using a `PlatterOverlayPresentation`
 class ViewController: UIViewController {
 	let dateButton = UIButton()
 	let timeButton = UIButton()
@@ -17,9 +18,9 @@ class ViewController: UIViewController {
 
 	/// this is our platter presentation: we keep a reference to it, since we want to change the presented
 	/// view in an existing presentation (switch from a date picker to a time picker).
-	let platterPresentation = PlatterPresentation()
+	let platterOverlayPresentation = PlatterOverlayPresentation()
 
-	func presentPicker(_ datePicker: UIDatePicker) {
+	func presentPicker(_ datePicker: UIDatePicker, from: UIView) {
 		datePicker.date = date
 		datePicker.addAction(UIAction(handler: { [weak self, weak datePicker] _ in
 			guard let self, let datePicker else { return }
@@ -29,25 +30,28 @@ class ViewController: UIViewController {
 		}), for: .valueChanged)
 
 		// the source view is our combined background - don't accept touches there
-		platterPresentation.sourceView = dateButton.superview
-		platterPresentation.isSourceViewPassThru = false
+		platterOverlayPresentation.sourceView = from
+		platterOverlayPresentation.isSourceViewPassThru = false
+
+		platterOverlayPresentation.alignment = .trailing
+		platterOverlayPresentation.alignmentView = from.superview
 
 		// do accept touches on the buttons
-		platterPresentation.additionalPassThruViews = [timeButton, dateButton]
+		platterOverlayPresentation.additionalPassThruViews = [timeButton, dateButton]
 
 		// when we are dismissed, update our highlighting
-		platterPresentation.dismissalCallback = { [weak self] in self?.updateButtonHighlighting() }
+		platterOverlayPresentation.dismissalCallback = { [weak self] in self?.updateButtonHighlighting() }
 
 		// actually present the date picker - full AutoLayout support, as you can see
-		platterPresentation.present(datePicker.wrapped(in: .layoutMargins), animated: true)
+		platterOverlayPresentation.present(datePicker.wrapped(in: .layoutMargins), animated: true)
 
 		// update the button highlighting now that we have presented something
 		updateButtonHighlighting()
 	}
 
 	@objc func showDateControl() {
-		guard platterPresentation.isPresented == false || isShowingTimePicker == true else {
-			return platterPresentation.dismiss(animated: true)
+		guard platterOverlayPresentation.isPresented == false || isShowingTimePicker == true else {
+			return platterOverlayPresentation.dismiss(animated: true)
 		}
 
 		let datePicker = UIDatePicker()
@@ -55,12 +59,12 @@ class ViewController: UIViewController {
 		datePicker.preferredDatePickerStyle = .inline
 
 		isShowingTimePicker = false
-		presentPicker(datePicker)
+		presentPicker(datePicker, from: dateButton)
 	}
 
 	@objc func showTimeControl() {
-		guard platterPresentation.isPresented == false || isShowingTimePicker == false else {
-			return platterPresentation.dismiss(animated: true)
+		guard platterOverlayPresentation.isPresented == false || isShowingTimePicker == false else {
+			return platterOverlayPresentation.dismiss(animated: true)
 		}
 
 		let timePicker = UIDatePicker()
@@ -69,7 +73,7 @@ class ViewController: UIViewController {
 		timePicker.preferredDatePickerStyle = .wheels
 
 		isShowingTimePicker = true
-		presentPicker(timePicker)
+		presentPicker(timePicker, from: timeButton)
 	}
 
 	// MARK: - Privates
@@ -79,7 +83,7 @@ class ViewController: UIViewController {
 	}
 
 	private func updateButtonHighlighting() {
-		if platterPresentation.isPresented == true {
+		if platterOverlayPresentation.isPresented == true {
 			dateButton.configuration?.baseForegroundColor = (isShowingTimePicker == false ? .tintColor : .label)
 			timeButton.configuration?.baseForegroundColor = (isShowingTimePicker == true ? .tintColor : .label)
 		} else {
@@ -104,6 +108,6 @@ class ViewController: UIViewController {
 		updateButtonHighlighting()
 		updateButtonTitles()
 
-		view.addSubview(.horizontallyStacked(dateButton, timeButton, distribution: .fillProportionally, spacing: 8), pinnedTo: .topCenter, of: .layoutMargins)
+		view.addSubview(.horizontallyStacked(dateButton, timeButton, distribution: .fillProportionally, spacing: 8), pinnedTo: .topLeading, of: .layoutMargins)
 	}
 }

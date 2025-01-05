@@ -30,15 +30,15 @@ import UIKit
 /// Another approach we could use is to pin the `platterView` to its correct fixed position (taking everything into account)
 /// using `AutoLayout`, but that quickly causes recursive layout cycles, because we do this in `layoutSubviews()`.
 /// It's worth exploring in the future perhaps.
-final class PlatterContainerView: UIView {
+final class PlatterOverlayContainerView: UIView {
 	let contentView = UIView()
 	let platterView = PlatterView()
 	let screenMargins = CGFloat(16)
 
-	weak var platterPresentation: PlatterPresentation?
+	weak var presentation: PlatterOverlayPresentation?
 
-	init(platterPresentation: PlatterPresentation?) {
-		self.platterPresentation = platterPresentation
+	init(presentation: PlatterOverlayPresentation?) {
+		self.presentation = presentation
 		super.init(frame: .zero)
 
 		addSubview(contentView, filling: .superview)
@@ -46,7 +46,7 @@ final class PlatterContainerView: UIView {
 
 		platterView.constrain(width: .atMost(sameAs: self, constant: -screenMargins), height: .atMost(sameAs: self, constant: -screenMargins))
 
-		if let presentedView = platterPresentation?.presentedView {
+		if let presentedView = presentation?.presentedView {
 			platterView.contentView.addSubview(presentedView, filling: .superview)
 		}
 
@@ -89,7 +89,7 @@ final class PlatterContainerView: UIView {
 			}, completion: { [weak self] _ in
 				// animation done, remove the old view, but only if we're not
 				// currently presenting it yet again.
-				if self?.platterPresentation?.presentedView !== oldView {
+				if self?.presentation?.presentedView !== oldView {
 					oldView.removeFromSuperview()
 				}
 			})
@@ -105,12 +105,17 @@ final class PlatterContainerView: UIView {
 	var keyboardScreenFrame: CGRect?
 
 	private var sourceViewFrame: CGRect {
-		guard let sourceView = platterPresentation?.sourceView else { return bounds }
-		return sourceView.convert(platterPresentation?.sourceRect ?? sourceView.bounds, to: self)
+		guard let sourceView = presentation?.sourceView else { return bounds }
+		return sourceView.convert(presentation?.sourceRect ?? sourceView.bounds, to: self)
+	}
+
+	private var alignmentViewFrame: CGRect {
+		guard let alignmentView = presentation?.alignmentView else { return sourceViewFrame }
+		return alignmentView.convert(presentation?.alignmentRect ?? alignmentView.bounds, to: self)
 	}
 
 	private func adjustForSourceView() {
-		if platterPresentation?.sourceView == nil {
+		if presentation?.sourceView == nil && presentation?.alignmentView == nil {
 			// no source view, try to present in the middle of the screen
 			platterView.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
 			contentView.transform = .identity
@@ -126,9 +131,10 @@ final class PlatterContainerView: UIView {
 	}
 
 	private func adjustForSourceViewVerticalRegular() {
-		guard let platterPresentation else { return }
+		guard let presentation else { return }
 
 		let sourceViewFrame = self.sourceViewFrame
+		let alignmentViewFrame = self.alignmentViewFrame
 		let insettedBounds = bounds.inset(by: safeAreaInsets).insetBy(dx: screenMargins, dy: screenMargins)
 		let platterHeight = platterView.contentView.bounds.height
 		let platterWidth = platterView.contentView.bounds.width
@@ -138,14 +144,14 @@ final class PlatterContainerView: UIView {
 		var newAnchorPoint = CGPoint(x: 0.5, y: 0.5)
 
 		// determine the horizontal center and anchor point based on settings
-		let horizontalSourceViewFrame = sourceViewFrame
+		let horizontalAlignmentViewFrame = alignmentViewFrame
 
-		func trailing() -> CGFloat { horizontalSourceViewFrame.maxX - platterWidth * 0.5 }
-		func leading() -> CGFloat { horizontalSourceViewFrame.minX + platterWidth * 0.5 }
-		func center() -> CGFloat { horizontalSourceViewFrame.midX }
+		func trailing() -> CGFloat { horizontalAlignmentViewFrame.maxX - platterWidth * 0.5 }
+		func leading() -> CGFloat { horizontalAlignmentViewFrame.minX + platterWidth * 0.5 }
+		func center() -> CGFloat { horizontalAlignmentViewFrame.midX }
 
-		newCenter.x = switch platterPresentation.alignment {
-			case .automatic: horizontalSourceViewFrame.midX <= bounds.width * 0.5 ? leading() : trailing()
+		newCenter.x = switch presentation.alignment {
+			case .automatic: horizontalAlignmentViewFrame.midX <= bounds.width * 0.5 ? leading() : trailing()
 			case .start: leading()
 			case .center: center()
 			case .end: trailing()
@@ -153,14 +159,14 @@ final class PlatterContainerView: UIView {
 		
 		newCenter.x = max(newCenter.x, insettedBounds.minX + platterWidth * 0.5)
 		newCenter.x = min(newCenter.x, insettedBounds.maxX - platterWidth * 0.5)
-		newAnchorPoint.x = (horizontalSourceViewFrame.midX - (newCenter.x - platterWidth * 0.5)) / max(1, platterWidth)
+		newAnchorPoint.x = (sourceViewFrame.midX - (newCenter.x - platterWidth * 0.5)) / max(1, platterWidth)
 
 		// determine the vertical center and anchor point based on where we have space to go to
-		let verticalSourceViewFrame = sourceViewFrame.insetBy(dx: -8, dy: -8) // add some spacing, so we don't "hug" the source view
+		let verticalAlignmentViewFrame = alignmentViewFrame.insetBy(dx: -8, dy: -8) // add some spacing, so we don't "hug" the source view
 
 		// these are possible locations of edges of the platter if we would extend the platter downwards or upwards
-		let downwardsBottomPlatterEdge = verticalSourceViewFrame.maxY + platterHeight
-		let upwardsTopPlatterEdge = verticalSourceViewFrame.minY - platterHeight
+		let downwardsBottomPlatterEdge = verticalAlignmentViewFrame.maxY + platterHeight
+		let upwardsTopPlatterEdge = verticalAlignmentViewFrame.minY - platterHeight
 
 		// check what fits
 		let fitsDownwards = (downwardsBottomPlatterEdge <= insettedBounds.maxY)
@@ -201,8 +207,8 @@ final class PlatterContainerView: UIView {
 
 	private func adjustNewCenterForKeyboardAvoidance(_ newCenter: CGPoint, platterHeight: CGFloat) -> CGPoint {
 		guard let keyboardScreenFrame else { return newCenter }
-		guard platterPresentation?.shouldAvoidKeyboard == true else { return newCenter }
-		guard platterPresentation?.containerViewController?.isBeingDismissed == false else { return newCenter }
+		guard presentation?.shouldAvoidKeyboard == true else { return newCenter }
+		guard presentation?.containerViewController?.isBeingDismissed == false else { return newCenter }
 
 		let keyboardInOurFrame = convert(keyboardScreenFrame, from: nil)
 		guard newCenter.y + platterHeight * 0.5 > keyboardInOurFrame.minY else { return newCenter }
@@ -214,9 +220,10 @@ final class PlatterContainerView: UIView {
 	private func adjustForSourceViewVerticalCompact() {
 		// THIS IS ESSENTIALLY A CLONE OF `adjustForSourceViewVerticalRegular` just with the
 		// vertical and horizontal calculations inverted. Would be nice to consolidate this in the future.
-		guard let platterPresentation else { return }
+		guard let presentation else { return }
 
 		let sourceViewFrame = self.sourceViewFrame
+		let alignmentViewFrame = self.alignmentViewFrame
 		let insettedBounds = bounds.inset(by: safeAreaInsets).insetBy(dx: screenMargins, dy: screenMargins)
 		let platterHeight = platterView.contentView.bounds.height
 		let platterWidth = platterView.contentView.bounds.width
@@ -226,14 +233,14 @@ final class PlatterContainerView: UIView {
 		var newAnchorPoint = CGPoint(x: 0.5, y: 0.5)
 
 		// determine the vertical center and anchor point based on settings
-		let verticalSourceViewFrame = sourceViewFrame
+		let verticalAlignmentViewFrame = alignmentViewFrame
 
-		func top() -> CGFloat { verticalSourceViewFrame.minY + platterHeight * 0.5 }
-		func bottom() -> CGFloat { verticalSourceViewFrame.maxY - platterHeight * 0.5 }
-		func center() -> CGFloat { verticalSourceViewFrame.midY }
+		func top() -> CGFloat { verticalAlignmentViewFrame.minY + platterHeight * 0.5 }
+		func bottom() -> CGFloat { verticalAlignmentViewFrame.maxY - platterHeight * 0.5 }
+		func center() -> CGFloat { verticalAlignmentViewFrame.midY }
 
-		newCenter.y = switch platterPresentation.alignment {
-			case .automatic: verticalSourceViewFrame.midY <= bounds.height * 0.5 ? top() : bottom()
+		newCenter.y = switch presentation.alignment {
+			case .automatic: verticalAlignmentViewFrame.midY <= bounds.height * 0.5 ? top() : bottom()
 			case .start: top()
 			case .center: center()
 			case .end: bottom()
@@ -241,14 +248,14 @@ final class PlatterContainerView: UIView {
 
 		newCenter.y = max(newCenter.y, insettedBounds.minY + platterHeight * 0.5)
 		newCenter.y = min(newCenter.y, insettedBounds.maxY - platterHeight * 0.5)
-		newAnchorPoint.y = (verticalSourceViewFrame.midY - (newCenter.y - platterHeight * 0.5)) / max(1, platterHeight)
+		newAnchorPoint.y = (sourceViewFrame.midY - (newCenter.y - platterHeight * 0.5)) / max(1, platterHeight)
 
 		// determine the horizontal center and anchor point based on where we have space to go to
-		let horizontalSourceViewFrame = sourceViewFrame.insetBy(dx: -8, dy: -8) // add some spacing, so we don't "hug" the source view
+		let horizontalAlignmentViewFrame = alignmentViewFrame.insetBy(dx: -8, dy: -8) // add some spacing, so we don't "hug" the source view
 
 		// these are possible locations of edges of the platter if we would extend the platter trailing or leading
-		let trailingPlatterEdge = horizontalSourceViewFrame.maxX + platterWidth
-		let leadingPlatterEdge = horizontalSourceViewFrame.minX - platterWidth
+		let trailingPlatterEdge = horizontalAlignmentViewFrame.maxX + platterWidth
+		let leadingPlatterEdge = horizontalAlignmentViewFrame.minX - platterWidth
 
 		// check what fits
 		let fitsTrailing = (trailingPlatterEdge <= insettedBounds.maxX)
@@ -291,7 +298,7 @@ final class PlatterContainerView: UIView {
 	@objc private func keyboardFrameWillChange(_ notification: Notification) {
 		keyboardScreenFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue ?? .zero
 
-		if platterPresentation?.shouldAvoidKeyboard == true {
+		if presentation?.shouldAvoidKeyboard == true {
 			let animationCurve = UIView.AnimationCurve(rawValue: (notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? Int) ?? 0) ?? .easeInOut
 			let animationDuration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval) ?? 0
 			let animationCurveOptions = UIView.AnimationOptions(rawValue: UInt(animationCurve.rawValue) << 16)
@@ -318,8 +325,8 @@ final class PlatterContainerView: UIView {
 
 	override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 		guard
-			let platterPresentation,
-			let presentingView = platterPresentation.presentingView
+			let presentation,
+			let presentingView = presentation.presentingView
 		else {
 			return super.hitTest(point, with: event)
 		}
@@ -342,7 +349,7 @@ final class PlatterContainerView: UIView {
 		}
 
 		// and if it's __not__ in the pass thru view, just assume it's us
-		guard platterPresentation.allPassThruViews.contains(where: { presentingViewHitView.isDescendant(of: $0) }) == true else {
+		guard presentation.allPassThruViews.contains(where: { presentingViewHitView.isDescendant(of: $0) }) == true else {
 			return self
 		}
 
@@ -354,6 +361,6 @@ final class PlatterContainerView: UIView {
 		super.touchesEnded(touches, with: event)
 
 		// someone touches the (transparent) background of our presentation, dismiss it!
-		platterPresentation?.dismiss(animated: true)
+		presentation?.dismiss(animated: true)
 	}
 }

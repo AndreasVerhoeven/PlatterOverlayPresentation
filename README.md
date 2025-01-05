@@ -1,4 +1,4 @@
-# PlatterPresentation
+# PlatterOverlayPresentation
 Present views in an overlay platter easily, such as the inline UIDatePicker does.
 
 ## Summary
@@ -20,7 +20,7 @@ Unfortunately, this is all internal to iOS. This small library mimicks that over
 
 ## How to Use
 
-You use a `PlatterPresentation` object to show a UIView presented in an overlay platter. There's a convenience method to quickly show something - but if you need more control, you can also instantiate a `PlatterPresentation` yourself and keep on using that.
+You use a `PlatterOverlayPresentation` object to show a UIView presented in an overlay platter. There's a convenience method to quickly show something - but if you need more control, you can also instantiate a `PlatterOverlayPresentation` yourself and keep on using that.
 
 ### Quick presentation
 
@@ -28,7 +28,7 @@ You use a `PlatterPresentation` object to show a UIView presented in an overlay 
 let myView = ....
 let myControl = ...
 
-PlatterPresentation.present(myView, from: myControl, animated: true)
+PlatterOverlayPresentation.present(myView, from: myControl, animated: true)
 ```
 
 That's all! The presentation will automatically figure out where to show close to the `from` view 
@@ -36,7 +36,7 @@ and when to dismiss the platter. There are a few more options (`rect`, `alignmen
 
 ```
 myControl.isHiglighted = true
-PlatterPresentation.present(myView, from: myControl, animated: true, callback: {
+PlatterOverlayPresentation.present(myView, from: myControl, animated: true, callback: {
 	// platter is no longer presented, update highlighting
 	myControl.isHiglighted = false
 })
@@ -45,31 +45,31 @@ PlatterPresentation.present(myView, from: myControl, animated: true, callback: {
 ### More Advanced usages
 
 If you've seen UIDatePicker with date/time buttons, you'll notice that it switches the 
-overlay platter content between a calendar view and a time picker, without presenting a new platter. That's also possible! You can keep a reference to a `platterPresentation` and update it or present new views on it, while it is already presenting something:
+overlay platter content between a calendar view and a time picker, without presenting a new platter. That's also possible! You can keep a reference to a `PlatterOverlayPresentation` and update it or present new views on it, while it is already presenting something:
 
 ```
-let platterPresentation = PlatterPresentation(sourceView: myControl)
+let presentation = PlatterOverlayPresentation(sourceView: myControl)
 
 func onTimeTapped() {
 	// if nothing is presented, we present the time picker - if the date picker
 	// is already presented, we smoothly animate the current platter to the time picker
-	platterPresentation.present(timePicker, animated: true)
+	presentation.present(timePicker, animated: true)
 }
 
 func onDateTapped() {
 	// if nothing is presented, we present the date picker - if the time picker
 	// is already presented, we smoothly animate the current platter to the date picker
-	platterPresentation.present(datePicker, animated: true)
+	presentation.present(datePicker, animated: true)
 }
 ```
 
-In this case we keep a platterPresentation around and call `present(:animated:)` on it
+In this case we keep a `presentation` around and call `present(:animated:)` on it
 with different views. If the platter is already visible, it will smoothly animate to the new
 view.
 
 #### More Properties
 
-There are also a few more properties you can configure on a `PlatterPresentation` object:
+There are also a few more properties you can configure on a `PlatterOverlayPresentation` object:
 
 - `sourceView` / `sourceRect` - defines where the platter is presented from
 - `alignment` - defines how the platter is aligned to the `sourceView`

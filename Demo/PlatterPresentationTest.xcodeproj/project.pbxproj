@@ -13,10 +13,10 @@
 		495CD57725F668C900AF2959 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495CD57525F668C900AF2959 /* Main.storyboard */; };
 		495CD57925F668CA00AF2959 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 495CD57825F668CA00AF2959 /* Assets.xcassets */; };
 		495CD57C25F668CA00AF2959 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495CD57A25F668CA00AF2959 /* LaunchScreen.storyboard */; };
-		496C0ABA2D2A042F00292929 /* PlatterPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C0AB52D2A042F00292929 /* PlatterPresentation.swift */; };
-		496C0ABB2D2A042F00292929 /* PlatterContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C0AB62D2A042F00292929 /* PlatterContainerView.swift */; };
+		496C0ABA2D2A042F00292929 /* PlatterOverlayPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C0AB52D2A042F00292929 /* PlatterOverlayPresentation.swift */; };
+		496C0ABB2D2A042F00292929 /* PlatterOverlayContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C0AB62D2A042F00292929 /* PlatterOverlayContainerView.swift */; };
 		496C0ABC2D2A042F00292929 /* CutoutShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C0AB72D2A042F00292929 /* CutoutShadowView.swift */; };
-		496C0ABD2D2A042F00292929 /* PlatterContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C0AB82D2A042F00292929 /* PlatterContainerViewController.swift */; };
+		496C0ABD2D2A042F00292929 /* PlatterOverlayContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C0AB82D2A042F00292929 /* PlatterOverlayContainerViewController.swift */; };
 		496C0ABE2D2A042F00292929 /* PlatterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C0AB92D2A042F00292929 /* PlatterView.swift */; };
 		496C0AC12D2A046B00292929 /* AutoLayoutConvenience in Frameworks */ = {isa = PBXBuildFile; productRef = 496C0AC02D2A046B00292929 /* AutoLayoutConvenience */; };
 /* End PBXBuildFile section */
@@ -30,10 +30,10 @@
 		495CD57825F668CA00AF2959 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		495CD57B25F668CA00AF2959 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		495CD57D25F668CA00AF2959 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		496C0AB52D2A042F00292929 /* PlatterPresentation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatterPresentation.swift; sourceTree = "<group>"; };
-		496C0AB62D2A042F00292929 /* PlatterContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatterContainerView.swift; sourceTree = "<group>"; };
+		496C0AB52D2A042F00292929 /* PlatterOverlayPresentation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatterOverlayPresentation.swift; sourceTree = "<group>"; };
+		496C0AB62D2A042F00292929 /* PlatterOverlayContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatterOverlayContainerView.swift; sourceTree = "<group>"; };
 		496C0AB72D2A042F00292929 /* CutoutShadowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CutoutShadowView.swift; sourceTree = "<group>"; };
-		496C0AB82D2A042F00292929 /* PlatterContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatterContainerViewController.swift; sourceTree = "<group>"; };
+		496C0AB82D2A042F00292929 /* PlatterOverlayContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatterOverlayContainerViewController.swift; sourceTree = "<group>"; };
 		496C0AB92D2A042F00292929 /* PlatterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatterView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -85,9 +85,9 @@
 			isa = PBXGroup;
 			children = (
 				496C0AB72D2A042F00292929 /* CutoutShadowView.swift */,
-				496C0AB62D2A042F00292929 /* PlatterContainerView.swift */,
-				496C0AB82D2A042F00292929 /* PlatterContainerViewController.swift */,
-				496C0AB52D2A042F00292929 /* PlatterPresentation.swift */,
+				496C0AB62D2A042F00292929 /* PlatterOverlayContainerView.swift */,
+				496C0AB82D2A042F00292929 /* PlatterOverlayContainerViewController.swift */,
+				496C0AB52D2A042F00292929 /* PlatterOverlayPresentation.swift */,
 				496C0AB92D2A042F00292929 /* PlatterView.swift */,
 			);
 			name = Sources;
@@ -130,8 +130,9 @@
 		495CD56425F668C900AF2959 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 1240;
+				LastUpgradeCheck = 1540;
 				TargetAttributes = {
 					495CD56B25F668C900AF2959 = {
 						CreatedOnToolsVersion = 12.4;
@@ -178,11 +179,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				496C0ABC2D2A042F00292929 /* CutoutShadowView.swift in Sources */,
-				496C0ABA2D2A042F00292929 /* PlatterPresentation.swift in Sources */,
+				496C0ABA2D2A042F00292929 /* PlatterOverlayPresentation.swift in Sources */,
 				495CD57425F668C900AF2959 /* ViewController.swift in Sources */,
 				496C0ABE2D2A042F00292929 /* PlatterView.swift in Sources */,
-				496C0ABB2D2A042F00292929 /* PlatterContainerView.swift in Sources */,
-				496C0ABD2D2A042F00292929 /* PlatterContainerViewController.swift in Sources */,
+				496C0ABB2D2A042F00292929 /* PlatterOverlayContainerView.swift in Sources */,
+				496C0ABD2D2A042F00292929 /* PlatterOverlayContainerViewController.swift in Sources */,
 				495CD57025F668C900AF2959 /* AppDelegate.swift in Sources */,
 				495CD57225F668C900AF2959 /* SceneDelegate.swift in Sources */,
 			);
@@ -247,6 +248,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -308,6 +310,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

@@ -1,5 +1,5 @@
 //
-//  PlatterPresentation.swift
+//  PlatterOverlayPresentation.swift
 //  dptest
 //
 //  Created by Andreas Verhoeven on 03/01/2025.
@@ -28,7 +28,7 @@ import UIKit
 /// to just present a view with a platter presentation.
 ///
 /// For more complex use cases, you can also instantiate a
-/// `PlatterPresentation` yourself and then call the
+/// `PlatterOverlayPresentation` yourself and then call the
 /// instance method `present(_:animated:)`. You can
 /// call this even when the platter is presenting already, to change
 /// the presented view in an animated fashion. You can use this to
@@ -40,17 +40,25 @@ import UIKit
 ///
 /// You can also register additional passthru views with `additionalPassThruViews`:
 /// taps on these views will be delivered to the view itself, instead of dismissing the platter.
-public final class PlatterPresentation {
+public final class PlatterOverlayPresentation {
 	/// the view that's currently being presented.
 	public private(set) var presentedView: UIView?
 
-	/// the view were we are presenting from - weakly held. The presentation tries to present
-	/// the platter closely to this view. If `nil` the platter will be presented in the middle of the screen.
+	/// the view were we are presenting from - weakly held. Needs to be provided, since it's
+	/// used to find the right context (~= UIViewController) to present from.
 	public weak var sourceView: UIView?
 
-	/// the rect in sourceView coordinates we are presenting from - if nil, the bounds of
-	/// sourceView will be used.
+	/// the rect in `sourceView` coordinates we are presenting from - if nil, the bounds of
+	/// `sourceView` will be used.
 	public var sourceRect: CGRect?
+
+	/// the view we should align to - if nil, `sourceView` will be used. The platter view will be aligned
+	/// shown and aligned to this view as close as possible.
+	public weak var alignmentView: UIView?
+
+	/// the rect in `alignmentView` coordinates to use - if nil, the bounds of
+	/// `alignmentView` will be used
+	public var alignmentRect: CGRect?
 
 	/// Alignment of the platter to the source view
 	public enum Alignment {
@@ -95,7 +103,7 @@ public final class PlatterPresentation {
 	/// - Parameters:
 	/// - view: the view
 	///
-	/// - Return: the `PlatterPresentation` doing the presenting if something is presented. Can safely be ignored if you don't need it
+	/// - Return: the `PlatterOverlayPresentation` doing the presenting if something is presented. Can safely be ignored if you don't need it
 	@discardableResult public static func present(
 		_ view: UIView,
 		from: UIView?,
@@ -103,15 +111,15 @@ public final class PlatterPresentation {
 		alignment: Alignment = .automatic,
 		animated: Bool,
 		callback: (() -> Void)? = nil
-	) -> PlatterPresentation? {
-		let presentation = PlatterPresentation(sourceView: from, sourceRect: rect)
+	) -> PlatterOverlayPresentation? {
+		let presentation = PlatterOverlayPresentation(sourceView: from, sourceRect: rect)
 		presentation.alignment = alignment
 		presentation.dismissalCallback = callback
 		presentation.present(view, animated: animated)
 		return presentation.isPresented ? presentation : nil
 	}
 
-	/// Presents a view using the `PlatterPresentation`'s configuration. If a view is already being presented,
+	/// Presents a view using the `PlatterOverlayPresentation`'s configuration. If a view is already being presented,
 	/// the current platter will be reused and - in case `animated == true`, smoothly animate to the new view.
 	public func present(_ presentedView: UIView, animated: Bool) {
 		if isPresented == true {
@@ -128,7 +136,7 @@ public final class PlatterPresentation {
 
 			self.presentedView = presentedView
 
-			let controller = PlatterContainerViewController(platterPresentation: self)
+			let controller = PlatterOverlayContainerViewController(presentation: self)
 			controller.modalPresentationStyle = .overFullScreen
 			controller.transitioningDelegate = controller
 			containerViewController = controller
@@ -143,7 +151,7 @@ public final class PlatterPresentation {
 		containerViewController?.dismiss(animated: animated)
 	}
 
-	/// Creates a new PlatterPresentation
+	/// Creates a new PlatterOverlayPresentation
 	public convenience init(sourceView: UIView? = nil, sourceRect: CGRect? = nil) {
 		self.init()
 		self.sourceView = sourceView
@@ -151,7 +159,7 @@ public final class PlatterPresentation {
 	}
 
 	// MARK: - UIViewController
-	internal var containerViewController: PlatterContainerViewController? {
+	internal var containerViewController: PlatterOverlayContainerViewController? {
 		didSet {
 			if containerViewController == nil {
 				presentedView = nil

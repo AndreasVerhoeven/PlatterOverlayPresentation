@@ -1,5 +1,5 @@
 //
-//  PlatterContainerViewController.swift
+//  PlatterOverlayContainerViewController.swift
 //  dptest
 //
 //  Created by Andreas Verhoeven on 03/01/2025.
@@ -12,12 +12,12 @@ import UIKit
 /// We drive the animation in viewDidAppear() and viewWillDisappear(),
 /// so that we can actually have easily interruptable animations - when disappearing,
 /// we move the "animation" view to the window while it animates the disappearance.
-final class PlatterContainerViewController: UIViewController {
+final class PlatterOverlayContainerViewController: UIViewController {
 	private(set) lazy var platterView = PlatterView()
-	private let platterPresentation: PlatterPresentation
+	private let presentation: PlatterOverlayPresentation
 
-	init(platterPresentation: PlatterPresentation) {
-		self.platterPresentation = platterPresentation
+	init(presentation: PlatterOverlayPresentation) {
+		self.presentation = presentation
 		super.init(nibName: nil, bundle: nil)
 	}
 	
@@ -31,11 +31,11 @@ final class PlatterContainerViewController: UIViewController {
 	}
 
 	// MARK: - Privates
-	private var containerView: PlatterContainerView! { view as? PlatterContainerView }
+	private var containerView: PlatterOverlayContainerView! { view as? PlatterOverlayContainerView }
 
 	// MARK: - UIViewController
 	override func loadView() {
-		view = PlatterContainerView(platterPresentation: platterPresentation)
+		view = PlatterOverlayContainerView(presentation: presentation)
 	}
 
 	override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
@@ -43,7 +43,7 @@ final class PlatterContainerViewController: UIViewController {
 		guard isBeingPresented == false else { return }
 
 		// new size: dismiss
-		platterPresentation.dismiss(animated: false)
+		presentation.dismiss(animated: false)
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -74,20 +74,20 @@ final class PlatterContainerViewController: UIViewController {
 			}
 		}
 		
-		platterPresentation.containerViewController = nil
-		platterPresentation.dismissalCallback?()
+		presentation.containerViewController = nil
+		presentation.dismissalCallback?()
 	}
 
 	// MARK: - UIResponder
 	override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
 		if presses.contains(where: { $0.key?.keyCode == .keyboardEscape }) {
-			platterPresentation.dismiss(animated: true)
+			presentation.dismiss(animated: true)
 		}
 	}
 }
 
 
-extension PlatterContainerViewController: UIViewControllerTransitioningDelegate {
+extension PlatterOverlayContainerViewController: UIViewControllerTransitioningDelegate {
 	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> (any UIViewControllerAnimatedTransitioning)? {
 		return self
 	}
@@ -97,7 +97,7 @@ extension PlatterContainerViewController: UIViewControllerTransitioningDelegate 
 	}
 }
 
-extension PlatterContainerViewController: UIViewControllerAnimatedTransitioning {
+extension PlatterOverlayContainerViewController: UIViewControllerAnimatedTransitioning {
 	func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
 		if let view = transitionContext.view(forKey: .to), let controller = transitionContext.viewController(forKey: .to) {
 			view.frame = transitionContext.finalFrame(for: controller)
