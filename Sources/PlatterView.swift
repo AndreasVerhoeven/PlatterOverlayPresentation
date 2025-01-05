@@ -51,7 +51,7 @@ final class PlatterView: UIView {
 		switch traitCollection.userInterfaceStyle {
 			case .unspecified: return 0.21
 			case .light: return 0.21
-			case .dark: return 0.4
+			case .dark: return 0.6
 			@unknown default: return 0.21
 		}
 	}
