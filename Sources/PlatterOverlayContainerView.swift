@@ -335,6 +335,12 @@ final class PlatterOverlayContainerView: UIView {
 		// - it's inside of the platter view -> handle normally
 		// - it's on the pass thru view location -> make it go to the pass thru view
 		// - it's on us our our contentView -> handle like it's us
+		let platterPoint = convert(point, to: platterView)
+		let platterHitView = platterView.hitTest(platterPoint, with: event)
+		if platterHitView?.isDescendant(of: platterView) == true {
+			return platterHitView
+		}
+
 		let hitView = super.hitTest(point, with: event)
 		guard hitView === contentView || hitView === self else {
 			// we've hit something not us our the contentview, must be the platter view
@@ -348,13 +354,13 @@ final class PlatterOverlayContainerView: UIView {
 			return self
 		}
 
-		// and if it's __not__ in the pass thru view, just assume it's us
-		guard presentation.allPassThruViews.contains(where: { presentingViewHitView.isDescendant(of: $0) }) == true else {
+		// and if it is in the pass thru view, just assume it's us
+		if presentation.allPassThruViews.contains(where: { presentingViewHitView.isDescendant(of: $0) }) == true {
+			// it's inside of the pass thrue view, let it go there
+			return presentingViewHitView
+		} else {
 			return self
 		}
-
-		// it's inside of the pass thrue view, let it go there
-		return presentingViewHitView
 	}
 
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
