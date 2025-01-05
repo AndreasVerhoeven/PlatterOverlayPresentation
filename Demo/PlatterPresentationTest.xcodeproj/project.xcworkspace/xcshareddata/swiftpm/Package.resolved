@@ -1,0 +1,15 @@
+{
+  "originHash" : "f96e0a2804b7eb0aa8973d170a657a2f8199215f30e7704c0d4a9d293834bdc3",
+  "pins" : [
+    {
+      "identity" : "autolayoutconvenience",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AndreasVerhoeven/AutoLayoutConvenience",
+      "state" : {
+        "branch" : "main",
+        "revision" : "bf6877f960789f5951bc0040781383b55af0c41e"
+      }
+    }
+  ],
+  "version" : 3
+}
