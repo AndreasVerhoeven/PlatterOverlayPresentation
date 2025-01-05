@@ -19,6 +19,7 @@
 		496C0ABD2D2A042F00292929 /* PlatterOverlayContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C0AB82D2A042F00292929 /* PlatterOverlayContainerViewController.swift */; };
 		496C0ABE2D2A042F00292929 /* PlatterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C0AB92D2A042F00292929 /* PlatterView.swift */; };
 		496C0AC12D2A046B00292929 /* AutoLayoutConvenience in Frameworks */ = {isa = PBXBuildFile; productRef = 496C0AC02D2A046B00292929 /* AutoLayoutConvenience */; };
+		496C0AC52D2AD02700292929 /* SimpleCompactPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C0AC42D2AD02700292929 /* SimpleCompactPickerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		496C0AB72D2A042F00292929 /* CutoutShadowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CutoutShadowView.swift; sourceTree = "<group>"; };
 		496C0AB82D2A042F00292929 /* PlatterOverlayContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatterOverlayContainerViewController.swift; sourceTree = "<group>"; };
 		496C0AB92D2A042F00292929 /* PlatterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatterView.swift; sourceTree = "<group>"; };
+		496C0AC42D2AD02700292929 /* SimpleCompactPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleCompactPickerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +91,7 @@
 				496C0AB82D2A042F00292929 /* PlatterOverlayContainerViewController.swift */,
 				496C0AB52D2A042F00292929 /* PlatterOverlayPresentation.swift */,
 				496C0AB92D2A042F00292929 /* PlatterView.swift */,
+				496C0AC42D2AD02700292929 /* SimpleCompactPickerView.swift */,
 			);
 			name = Sources;
 			path = ../../Sources;
@@ -178,6 +181,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				496C0AC52D2AD02700292929 /* SimpleCompactPickerView.swift in Sources */,
 				496C0ABC2D2A042F00292929 /* CutoutShadowView.swift in Sources */,
 				496C0ABA2D2A042F00292929 /* PlatterOverlayPresentation.swift in Sources */,
 				495CD57425F668C900AF2959 /* ViewController.swift in Sources */,

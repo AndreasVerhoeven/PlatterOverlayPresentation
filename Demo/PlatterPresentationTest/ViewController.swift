@@ -10,6 +10,8 @@ import AutoLayoutConvenience
 
 /// This example mimicks a compact UIDatePicker by using a `PlatterOverlayPresentation`
 class ViewController: UIViewController {
+	let simplePicker = SimpleCompactPickerView<String>()
+
 	let dateButton = UIButton()
 	let timeButton = UIButton()
 
@@ -109,5 +111,18 @@ class ViewController: UIViewController {
 		updateButtonTitles()
 
 		view.addSubview(.horizontallyStacked(dateButton, timeButton, distribution: .fillProportionally, spacing: 8), pinnedTo: .topLeading, of: .layoutMargins)
+
+		simplePicker.items = (1..<21).map { "Item \($0)" }
+		simplePicker.selectedIndex = 1
+		view.addSubview(simplePicker, pinnedTo: .leadingCenter, of: .layoutMargins)
+
+		let cell = SimpleCompactPickerView<String>.TableViewCell(style: .default, reuseIdentifier: nil)
+		cell.textLabel?.text = "Drink"
+		cell.picker.showsChevron = false
+		cell.picker.noSelectionTitle = "Pick..."
+		cell.picker.setItems(["Cola", "Beer", "Wine", "Root-beer", "Water"], selectedIndex: nil, animated: false)
+
+		cell.frame = CGRect(x: 16, y: 140, width: 300, height: 44)
+		view.addSubview(cell)
 	}
 }
