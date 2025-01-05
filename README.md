@@ -11,9 +11,9 @@ Such an overlay is called a "platter" inside UIKit. It shows a view in a round r
 
 Unfortunately, this is all internal to iOS. This small library mimicks that overlay UI with an easy to use interface.
 
-##Screenshot
+## Screenshot
 
-![Screenshot](https://github.com/user-attachments/assets/4c2e4f5b-b06e-4042-a2c0-cd35c506f0f7)
+<img width="382" alt="Screenshot of the Platter" src="https://github.com/user-attachments/assets/4c2e4f5b-b06e-4042-a2c0-cd35c506f0f7" />
 
 ## How to Use
 
