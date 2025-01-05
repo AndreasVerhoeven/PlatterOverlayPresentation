@@ -68,10 +68,6 @@ class ViewController: UIViewController {
 		timePicker.datePickerMode = .time
 		timePicker.preferredDatePickerStyle = .wheels
 
-		DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-			timePicker.constrainedFixedWidth = 120
-		}
-
 		isShowingTimePicker = true
 		presentPicker(timePicker)
 	}
@@ -108,6 +104,6 @@ class ViewController: UIViewController {
 		updateButtonHighlighting()
 		updateButtonTitles()
 
-		view.addSubview(.horizontallyStacked(dateButton, timeButton, distribution: .fillProportionally, spacing: 8), pinnedTo: .topLeading, of: .layoutMargins)
+		view.addSubview(.horizontallyStacked(dateButton, timeButton, distribution: .fillProportionally, spacing: 8), pinnedTo: .topCenter, of: .layoutMargins)
 	}
 }
