@@ -23,7 +23,7 @@ final class PlatterView: UIView {
 			self.clipView.activeConditionalConstraintsConfigurationName = .collapsed
 			self.transform = CGAffineTransform(scaleX: self.collapsedScale, y: self.collapsedScale)
 			self.shadowView.alpha = 0
-			//self.alpha = 0
+			self.alpha = 0
 		}, completion: completion)
 	}
 
