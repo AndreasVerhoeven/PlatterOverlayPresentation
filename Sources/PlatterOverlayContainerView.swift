@@ -205,18 +205,6 @@ final class PlatterOverlayContainerView: UIView {
 		platterView.layer.anchorPoint = newAnchorPoint
 	}
 
-	private func adjustNewCenterForKeyboardAvoidance(_ newCenter: CGPoint, platterHeight: CGFloat) -> CGPoint {
-		guard let keyboardScreenFrame else { return newCenter }
-		guard presentation?.shouldAvoidKeyboard == true else { return newCenter }
-		guard presentation?.containerViewController?.isBeingDismissed == false else { return newCenter }
-
-		let keyboardInOurFrame = convert(keyboardScreenFrame, from: nil)
-		guard newCenter.y + platterHeight * 0.5 > keyboardInOurFrame.minY else { return newCenter }
-
-		return CGPoint(x: newCenter.x, y: keyboardInOurFrame.minY - screenMargins - platterHeight * 0.5)
-
-	}
-
 	private func adjustForSourceViewVerticalCompact() {
 		// THIS IS ESSENTIALLY A CLONE OF `adjustForSourceViewVerticalRegular` just with the
 		// vertical and horizontal calculations inverted. Would be nice to consolidate this in the future.
@@ -292,6 +280,18 @@ final class PlatterOverlayContainerView: UIView {
 
 		contentView.transform = CGAffineTransform(translationX: newCenter.x - bounds.width * 0.5, y: newCenter.y - bounds.height * 0.5)
 		platterView.layer.anchorPoint = newAnchorPoint
+	}
+
+	private func adjustNewCenterForKeyboardAvoidance(_ newCenter: CGPoint, platterHeight: CGFloat) -> CGPoint {
+		guard let keyboardScreenFrame else { return newCenter }
+		guard presentation?.shouldAvoidKeyboard == true else { return newCenter }
+		guard presentation?.containerViewController?.isBeingDismissed == false else { return newCenter }
+
+		let keyboardInOurFrame = convert(keyboardScreenFrame, from: nil)
+		guard newCenter.y + platterHeight * 0.5 > keyboardInOurFrame.minY else { return newCenter }
+
+		return CGPoint(x: newCenter.x, y: keyboardInOurFrame.minY - screenMargins - platterHeight * 0.5)
+
 	}
 
 	// MARK: Notifications
